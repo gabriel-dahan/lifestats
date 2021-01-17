@@ -63,6 +63,6 @@ class LifeStats:
         return self.years
 
 if __name__ == "__main__":
-    s = LifeStats("30/07/2005")
+    s = LifeStats("dd/MM/YYYY")
     stats = s.stats()
     print(stats)
