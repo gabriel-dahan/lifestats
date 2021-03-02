@@ -85,51 +85,7 @@ class DateStats(object):
     def secondssince(self) -> int:
         pass
 
-class FilesTree(object):
-
-    def __init__(self, path: str):
-        self.path = pathlib.Path(path)
-
-        self._tee    = '├──'
-        self._last   = '└──'
-        self._space  = '    '
-        self._branch = '│   '
-    
-    def _depth_space(self, depth: int):
-        builder = ""
-        for _ in range(1, depth + 1):
-            builder + self._space
-
-        return builder
-
-    def list_dir(self):
-        depth = 0
-        if self.path.is_dir():
-            for file in self.path:
-                print(self._depth_space(depth + 1) + " > ")
-                if file.isDirectory:
-                    filesArborescence(file, depth + 1)
-
-    """
-    public static void main(String[] args) {
-
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println("Entrez l'adresse d'un dossier de votre ordinateur :");
-        String path = scanner.nextLine();
-
-        File pathFolder = new File(path);
-
-        filesArborescence(pathFolder, 0);
-
-    }
-    """
-
 if __name__ == "__main__":
-    """
-    d = DateStats("11/07/2005")
+    d = DateStats("11/07/1985")
     stats = d.birthstats()
     print(stats)
-    """
-
-    print(pathlib.Path('G:/minecraft_servers/1.16.4-server/plugins').is_dir())
