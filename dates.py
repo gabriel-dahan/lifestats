@@ -1,12 +1,18 @@
 from typing import Literal, Tuple
 import re
+from datetime import datetime
 
 class Date(object):
 
     def __init__(self, date: str) -> None:
-        self.date = date
+        if date == 'now': 
+            self.date = str(datetime.now().strftime('%d/%m/%Y'))
+        else:
+            self.date = date
         assert self.is_valid_date(), 'Date is not valid, it must respect the format dd(/-.)mm(/-.)yyyy (ie. 30/07/2005 or 30-07-2005 or 30.07.2005).'
-        self._parsed_date = tuple(int(elem) for elem in date.split(self.get_separator()))
+        if self.get_separator() != '/':
+            self.date = self.date.replace(self.get_separator(), '/') 
+        self._parsed_date = tuple(int(elem) for elem in self.date.split('/'))
         self.dyear = self._parsed_date[2]
         self.dmonth = self._parsed_date[1]
         self.dday = self._parsed_date[0]
@@ -57,18 +63,24 @@ class Date(object):
 
     def days_to(self, date: str) -> int:
         date2 = Date(date)
-        assert date2.dyear > self.dyear, f'{date2} cannot be smaller than {self}.'
-
-        days = 0
-        for year in range(self.dyear, date2.dyear + 1):
-            if year == self.dyear:
-                days += self.remaining_days()
-                continue
-            elif year == date2.dyear:
-                days += date2.passed_days()
-                continue
-            d = Date(f'01-01-{year}')
-            days += d.year_days_nmb()
+        err = f'{date2} cannot be smaller than {self}.'
+        assert date2.dyear >= self.dyear, err
+        if date2.dyear == self.dyear:
+            assert date2.dmonth >= self.dmonth, err
+            if date2.dmonth == self.dmonth:
+                assert date2.dday >= self.dday, err
+            days = date2.passed_days() - self.passed_days()
+        else:
+            days = 0
+            for year in range(self.dyear, date2.dyear + 1):
+                if year == self.dyear:
+                    days += self.remaining_days()
+                    continue
+                elif year == date2.dyear:
+                    days += date2.passed_days()
+                    continue
+                d = Date(f'01/01/{year}')
+                days += d.year_days_nmb()
         return days
 
     def __repr__(self) -> str:
@@ -79,4 +91,4 @@ class Date(object):
 
 if __name__ == "__main__":
     d = Date('30.07.2005')
-    print(d.days_to('14.09.2021'))
+    print(d.days_to('now'))
