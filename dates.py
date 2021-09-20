@@ -10,12 +10,15 @@ class Date(object):
         else:
             self.date = date
         assert self.is_valid_date(), 'Date is not valid, it must respect the format dd(/-.)mm(/-.)yyyy (ie. 30/07/2005 or 30-07-2005 or 30.07.2005).'
-        if self.get_separator() != '/':
-            self.date = self.date.replace(self.get_separator(), '/') 
+        if self._get_separator() != '/':
+            self.date = self.date.replace(self._get_separator(), '/') 
         self._parsed_date = tuple(int(elem) for elem in self.date.split('/'))
         self.dyear = self._parsed_date[2]
         self.dmonth = self._parsed_date[1]
         self.dday = self._parsed_date[0]
+
+    def _get_separator(self) -> str:
+        return self.date[2:][0]
 
     def get_tuple(self) -> Tuple[int]:
         return self._parsed_date
@@ -27,14 +30,11 @@ class Date(object):
     def is_leap_year(self) -> bool:
         return True if self.dyear % 4 == 0 and not self.dyear % 100 == 0 else False
 
-    def get_separator(self) -> str:
-        return self.date[2:][0]
-
     def year_days_nmb(self) -> int:
         """ Returns the amount of days in a year depending on if it's a leap year or not """
         return 366 if self.is_leap_year() else 365
 
-    def month_days_nmb(self, month: Literal[28, 29, 30, 31]) -> int:
+    def month_days_nmb(self, month: int) -> Literal[28, 29, 30, 31]:
         """ Returns the amount of days in a month of a year """
         if self.is_leap_year() and month == 2:
             return 29
@@ -62,6 +62,7 @@ class Date(object):
         return days
 
     def days_to(self, date: str) -> int:
+        """ Returns the number of days between two dates. """
         date2 = Date(date)
         err = f'{date2} cannot be smaller than {self}.'
         assert date2.dyear >= self.dyear, err
@@ -91,4 +92,4 @@ class Date(object):
 
 if __name__ == "__main__":
     d = Date('30.07.2005')
-    print(d.days_to('now'))
+    print(d.get_tuple())
