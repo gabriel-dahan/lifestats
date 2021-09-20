@@ -36,14 +36,12 @@ class Date(object):
 
     def month_days_nmb(self, month: int) -> Literal[28, 29, 30, 31]:
         """ Returns the amount of days in a month of a year """
-        if self.is_leap_year() and month == 2:
-            return 29
         if month == 2:
-            return 28
-        if month in (1, 3, 5, 7, 8, 10, 12):
-            return 31
+            return 29 if self.is_leap_year() else 28
+        elif month <= 7:
+            return 30 + month % 2
         else:
-            return 30
+            return 31 - month % 2
 
     def passed_days(self) -> int:
         """ Returns the number of passed days since the date's year started. """
@@ -92,4 +90,4 @@ class Date(object):
 
 if __name__ == "__main__":
     d = Date('30.07.2005')
-    print(d.get_tuple())
+    print(d.days_to('now'))
