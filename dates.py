@@ -24,11 +24,10 @@ class Date(object):
         return self._parsed_date
 
     def is_valid_date(self) -> bool:
-        test = re.match('^([0]?[1-9]|[1|2][0-9]|[3][0|1])[./-]([0]?[1-9]|[1][0-2])[./-]([0-9]{4}|[0-9]{2})$', self.date)
-        return True if test else False
+        return re.match('^([0]?[1-9]|[1|2][0-9]|[3][0|1])[./-]([0]?[1-9]|[1][0-2])[./-]([0-9]{4}|[0-9]{2})$', self.date)
 
     def is_leap_year(self) -> bool:
-        return True if self.dyear % 4 == 0 and not self.dyear % 100 == 0 else False
+        return self.dyear % 4 == 0 and self.dyear % 100 != 0
 
     def year_days_nmb(self) -> int:
         """ Returns the amount of days in a year depending on if it's a leap year or not """
@@ -45,17 +44,13 @@ class Date(object):
 
     def passed_days(self) -> int:
         """ Returns the number of passed days since the date's year started. """
-        days = 0
-        for month in range(1, self.dmonth):
-            days += self.month_days_nmb(month)
+        days = sum(self.month_days_nmb(month) for month in range(1, self.dmonth))
         days += self.dday
         return days
 
     def remaining_days(self) -> int:
         """ Returns the number of remaining days before the date's year end. """
-        days = 0
-        for month in range(self.dmonth + 1, 13):
-            days += self.month_days_nmb(month)
+        days = sum(self.month_days_nmb(month) for month in range(self.dmonth + 1, 13))
         days += self.month_days_nmb(self.dmonth) - self.dday
         return days
 
